@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smartcanteen/theme/App_Color.dart';
-import 'package:smartcanteen/screen/SignupPage.dart'; 
+import 'package:smartcanteen/theme/app_color.dart';
+import 'package:smartcanteen/screen/signup_page.dart'; 
 // ADD THIS IMPORT:
-import 'package:smartcanteen/screen/DashboardPage.dart'; 
+import 'package:smartcanteen/screen/dashboard_page.dart'; 
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -42,7 +42,7 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
+                            color: AppColors.primary.withValues(alpha: 0.3),
                             blurRadius: 15,
                             spreadRadius: 2)
                       ],
@@ -158,7 +158,7 @@ class LoginPage extends StatelessWidget {
           left: -50,
           child: CircleAvatar(
             radius: 120,
-            backgroundColor: AppColors.primary.withOpacity(0.12),
+            backgroundColor: AppColors.primary.withValues(alpha: 0.12),
           ),
         ),
         Positioned(
@@ -169,7 +169,7 @@ class LoginPage extends StatelessWidget {
             height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.primary.withOpacity(0.15), width: 2),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.15), width: 2),
             ),
           ),
         ),
@@ -199,7 +199,7 @@ class LoginPage extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
         boxShadow: [
-          BoxShadow(color: Colors.orange.withOpacity(0.1), blurRadius: 10)
+          BoxShadow(color: Colors.orange.withValues(alpha: 0.1), blurRadius: 10)
         ],
       ),
       child: OutlinedButton(
@@ -251,7 +251,7 @@ class LoginPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(35),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.4),
+                color: AppColors.primary.withValues(alpha: 0.4),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -289,7 +289,7 @@ class LoginPage extends StatelessWidget {
             width: mobile ? 300 : 460,
             height: mobile ? 280 : 400,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.15),
+              color: AppColors.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(50),
             ),
             child: ClipRRect(
@@ -345,7 +345,7 @@ class LoginPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(15),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20)],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 20)],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smartcanteen/theme/App_Color.dart';
-// ADD THIS IMPORT:
-import 'package:smartcanteen/screen/DashboardPage.dart';
+import 'package:smartcanteen/screen/dashboard_page.dart';
+import 'package:smartcanteen/theme/app_color.dart';
 
 class OTPVerificationPage extends StatelessWidget {
   const OTPVerificationPage({super.key});
@@ -73,7 +72,7 @@ class OTPVerificationPage extends StatelessWidget {
         decoration: InputDecoration(
           counterText: "",
           filled: true,
-          fillColor: Colors.white.withOpacity(0.9),
+          fillColor: Colors.white.withValues(alpha: 0.9),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: const BorderSide(color: Colors.black12),
@@ -126,7 +125,7 @@ class OTPVerificationPage extends StatelessWidget {
       height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
+        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 6))],
       ),
       child: ElevatedButton(
         // UPDATED LOGIC HERE:

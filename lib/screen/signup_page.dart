@@ -1,8 +1,7 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smartcanteen/theme/App_Color.dart';
-import 'package:smartcanteen/screen/OTPVerificationPage.dart'; // Ensure you create this file
+import 'package:smartcanteen/theme/app_color.dart';
+import 'package:smartcanteen/screen/otp_verification_page.dart'; // Ensure you create this file
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
@@ -48,7 +47,7 @@ class SignupPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 25,
                             offset: const Offset(0, 10),
                           )
