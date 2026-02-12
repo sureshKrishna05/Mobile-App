@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smartcanteen/theme/app_color.dart';
 import 'package:smartcanteen/screen/signup_page.dart'; 
 // ADD THIS IMPORT:
-import 'package:smartcanteen/screen/dashboard_page.dart'; 
+//import 'package:smartcanteen/screen/dashboard_page.dart'; 
+import 'package:smartcanteen/screen/college_section_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -55,7 +56,7 @@ class LoginPage extends StatelessWidget {
                         // Move to Dashboard and replace the login stack
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const DashboardPage()),
+                          MaterialPageRoute(builder: (context) => const CollegeSelectionPage()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
