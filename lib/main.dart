@@ -4,7 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smartcanteen/theme/app_color.dart';
 import 'package:smartcanteen/screen/login_page.dart';
 
-void main() {
+void main() async {
+  // 1. Ensure Flutter binding is initialized before doing any async work
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Await pending Google Fonts so it doesn't freeze the first frame
+  await GoogleFonts.pendingFonts();
+
   runApp(const SmartCanteenApp());
 }
 

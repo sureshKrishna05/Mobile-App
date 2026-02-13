@@ -8,12 +8,28 @@ class CollegeSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy Data for Colleges
+    // 🟢 UPDATED: Working Unsplash URLs to prevent HTTP 404 errors
     final List<Map<String, String>> colleges = [
-      {"name": "Engineering Campus", "image": "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=500&q=60", "location": "North Block"},
-      {"name": "Medical College", "image": "https://images.unsplash.com/photo-1576091160550-217358c7e618?auto=format&fit=crop&w=500&q=60", "location": "West Wing"},
-      {"name": "Arts & Science", "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=500&q=60", "location": "Central Hub"},
-      {"name": "Business School", "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=500&q=60", "location": "South Campus"},
+      {
+        "name": "Engineering Campus", 
+        "image": "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=500&q=60", 
+        "location": "North Block"
+      },
+      {
+        "name": "Medical College", 
+        "image": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=500&q=60", 
+        "location": "West Wing"
+      },
+      {
+        "name": "Arts & Science", 
+        "image": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=500&q=60", 
+        "location": "Central Hub"
+      },
+      {
+        "name": "Business School", 
+        "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=500&q=60", 
+        "location": "South Campus"
+      },
     ];
 
     return Scaffold(
@@ -30,39 +46,56 @@ class CollegeSelectionPage extends StatelessWidget {
             ),
           ),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  Text("Select Campus",
-                      style: GoogleFonts.poppins(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark)),
-                  const SizedBox(height: 5),
-                  const Text("Where are you ordering from today?",
-                      style: TextStyle(color: AppColors.textLight, fontSize: 16)),
-                  const SizedBox(height: 30),
-                  
-                  // Grid of Colleges
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.8,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Determine layout breakpoints
+                final bool isDesktop = constraints.maxWidth > 800;
+                final bool isTablet = constraints.maxWidth >= 600 && constraints.maxWidth <= 800;
+                
+                // Fluid padding
+                final double horizontalPadding = isDesktop ? constraints.maxWidth * 0.1 : (isTablet ? 40 : 25);
+                
+                // Fluid typography
+                final double titleSize = (constraints.maxWidth * 0.08).clamp(28.0, 40.0);
+                final double subtitleSize = (constraints.maxWidth * 0.04).clamp(16.0, 18.0);
+
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Text("Select Campus",
+                          style: GoogleFonts.poppins(
+                              fontSize: titleSize,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textDark)),
+                      const SizedBox(height: 5),
+                      Text("Where are you ordering from today?",
+                          style: TextStyle(color: AppColors.textLight, fontSize: subtitleSize)),
+                      const SizedBox(height: 30),
+                      
+                      // Grid of Colleges
+                      Expanded(
+                        child: GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 250, 
+                            // 🟢 FIX: Changed from 0.85 to 0.75 to make cards taller 
+                            // and prevent "RenderFlex overflowed" errors.
+                            childAspectRatio: 0.75,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
+                          itemCount: colleges.length,
+                          itemBuilder: (context, index) {
+                            return _buildCollegeCard(context, colleges[index]);
+                          },
+                        ),
                       ),
-                      itemCount: colleges.length,
-                      itemBuilder: (context, index) {
-                        return _buildCollegeCard(context, colleges[index]);
-                      },
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              }
             ),
           ),
         ],
@@ -73,7 +106,6 @@ class CollegeSelectionPage extends StatelessWidget {
   Widget _buildCollegeCard(BuildContext context, Map<String, String> data) {
     return GestureDetector(
       onTap: () {
-        // Navigate to Dashboard for the selected college
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const DashboardPage()),
@@ -103,6 +135,13 @@ class CollegeSelectionPage extends StatelessWidget {
                   data['image']!,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  // 🟢 ADDED: Error Builder to safely handle broken links in the future
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[200],
+                      child: const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
+                    );
+                  },
                 ),
               ),
             ),
@@ -110,7 +149,8 @@ class CollegeSelectionPage extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                // 🟢 FIX: Reduced padding from 12 to 10 to give text more space
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -130,9 +170,13 @@ class CollegeSelectionPage extends StatelessWidget {
                       children: [
                         const Icon(Icons.location_on, size: 12, color: AppColors.primary),
                         const SizedBox(width: 4),
-                        Text(
-                          data['location']!,
-                          style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textLight),
+                        Flexible(
+                          child: Text(
+                            data['location']!,
+                            style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textLight),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     )

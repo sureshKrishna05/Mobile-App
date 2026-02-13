@@ -8,50 +8,67 @@ class OTPVerificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double boxSize = (screenWidth - 100) / 4;
-
     return Scaffold(
       resizeToAvoidBottomInset: true, 
       body: Stack(
         children: [
           _buildBackground(),
           SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textDark),
-                      onPressed: () => Navigator.pop(context),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Fluid sizing calculations
+                final bool isDesktop = constraints.maxWidth > 600;
+                // Caps the form width at 450px for desktop, otherwise uses screen width minus padding
+                final double contentWidth = isDesktop ? 450 : constraints.maxWidth;
+                // Calculates OTP box size dynamically, clamped between 50 and 70 pixels
+                final double boxSize = ((contentWidth - 100) / 4).clamp(50.0, 70.0);
+
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 450), // Prevents ultra-wide stretching
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 20),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textDark),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                          SizedBox(height: constraints.maxHeight * 0.05), // Responsive spacing
+                          
+                          _buildHeader(contentWidth),
+                          
+                          SizedBox(height: constraints.maxHeight * 0.06),
+                          
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: List.generate(4, (index) => 
+                              _otpBox(
+                                context, 
+                                size: boxSize,
+                                first: index == 0, 
+                                last: index == 3
+                              )
+                            ),
+                          ),
+                          
+                          SizedBox(height: constraints.maxHeight * 0.06),
+                          
+                          _buildVerifyButton(context),
+                          const SizedBox(height: 30),
+                          _buildResendSection(),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  _buildHeader(),
-                  const SizedBox(height: 50),
-                  
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(4, (index) => 
-                      _otpBox(
-                        context, 
-                        size: boxSize > 70 ? 70 : boxSize,
-                        first: index == 0, 
-                        last: index == 3
-                      )
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 50),
-                  _buildVerifyButton(context), // Logic added inside this method
-                  const SizedBox(height: 30),
-                  _buildResendSection(),
-                ],
-              ),
+                );
+              }
             ),
           ),
         ],
@@ -68,7 +85,8 @@ class OTPVerificationPage extends StatelessWidget {
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         maxLength: 1,
-        style: TextStyle(fontSize: size * 0.4, fontWeight: FontWeight.bold),
+        // Font size scales with the box size
+        style: TextStyle(fontSize: size * 0.45, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           counterText: "",
           filled: true,
@@ -106,15 +124,23 @@ class OTPVerificationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(double width) {
+    // Fluid typography
+    final double titleSize = (width * 0.08).clamp(26.0, 32.0);
+    final double subtitleSize = (width * 0.04).clamp(14.0, 16.0);
+
     return Column(
       children: [
-        Text("Verify Email",
-          style: GoogleFonts.poppins(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+        Text(
+          "Verify Email",
+          style: GoogleFonts.poppins(fontSize: titleSize, fontWeight: FontWeight.bold, color: AppColors.textDark)
+        ),
         const SizedBox(height: 10),
-        const Text("Enter the 4-digit code sent to your mail.",
+        Text(
+          "Enter the 4-digit code sent to your mail.",
           textAlign: TextAlign.center,
-          style: TextStyle(color: AppColors.textLight, fontSize: 16)),
+          style: TextStyle(color: AppColors.textLight, fontSize: subtitleSize)
+        ),
       ],
     );
   }
@@ -122,15 +148,19 @@ class OTPVerificationPage extends StatelessWidget {
   Widget _buildVerifyButton(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 60,
+      height: 60, // Fixed height is fine here since width is constrained
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 6))],
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3), 
+            blurRadius: 12, 
+            offset: const Offset(0, 6)
+          )
+        ],
       ),
       child: ElevatedButton(
-        // UPDATED LOGIC HERE:
         onPressed: () {
-          // Navigates to Dashboard and removes the OTP screen from the back-stack
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const DashboardPage()),
