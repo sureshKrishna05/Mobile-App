@@ -1,28 +1,30 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smartcanteen/theme/App_Color.dart';
-import 'package:smartcanteen/screen/SignupPage.dart'; 
-// ADD THIS IMPORT:
-import 'package:smartcanteen/screen/DashboardPage.dart'; 
+import 'package:smartcanteen/theme/app_color.dart';
+import 'package:smartcanteen/screen/signup_page.dart'; 
+// import 'package:smartcanteen/screen/dashboard_page.dart'; 
+import 'package:smartcanteen/screen/college_section_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
-  bool isMobile(BuildContext context) => MediaQuery.of(context).size.width < 800;
-
   void _showLoginDialog(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    
     showDialog(
       context: context,
       builder: (context) => Center(
         child: SingleChildScrollView(
           child: Dialog(
             backgroundColor: AppColors.surface,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+            insetPadding: EdgeInsets.symmetric(
+              horizontal: screenWidth > 450 ? 0 : 20, // Responsive dialog padding
+            ),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             child: Container(
               padding: const EdgeInsets.all(32),
-              width: 400,
+              width: screenWidth > 400 ? 400 : screenWidth * 0.9, // Caps width at 400
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -42,20 +44,17 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
+                            color: AppColors.primary.withValues(alpha: 0.3),
                             blurRadius: 15,
                             spreadRadius: 2)
                       ],
                     ),
                     child: ElevatedButton(
-                      // UPDATED LINE:
                       onPressed: () {
-                        // Remove the dialog first
                         Navigator.pop(context); 
-                        // Move to Dashboard and replace the login stack
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const DashboardPage()),
+                          MaterialPageRoute(builder: (context) => const CollegeSelectionPage()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -93,7 +92,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool mobile = isMobile(context);
+    final size = MediaQuery.sizeOf(context);
 
     return Scaffold(
       body: Stack(
@@ -111,38 +110,51 @@ class LoginPage extends StatelessWidget {
           ),
           _buildAestheticBackground(),
           SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: mobile ? 25 : 60, 
-                vertical: 30
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Determine layout breakpoints
+                final isDesktop = constraints.maxWidth >= 900;
+                final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 900;
+                final isMobile = constraints.maxWidth < 600;
+                
+                // Dynamically calculate horizontal padding based on screen size
+                final double horizontalPadding = isDesktop ? size.width * 0.1 : (isTablet ? 40 : 20);
+
+                return SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 30),
+                  child: Column(
                     children: [
-                      _buildLogo(),
-                      _buildNavButton(context, "Sign Up"),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildLogo(size.width),
+                          _buildNavButton(context, "Sign Up"),
+                        ],
+                      ),
+                      SizedBox(height: isMobile ? size.height * 0.05 : size.height * 0.1),
+                      
+                      // Flex dynamically changes between Row (Desktop) and Column (Mobile/Tablet)
+                      Flex(
+                        direction: isDesktop ? Axis.horizontal : Axis.vertical,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: isDesktop ? constraints.maxWidth * 0.45 : double.infinity,
+                            child: _buildHeroText(context, isDesktop),
+                          ),
+                          if (!isDesktop) SizedBox(height: size.height * 0.08) else const SizedBox(width: 50),
+                          SizedBox(
+                            width: isDesktop ? constraints.maxWidth * 0.4 : double.infinity,
+                            child: _buildHeroImageSection(constraints.maxWidth),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40), // Bottom padding
                     ],
                   ),
-                  SizedBox(height: mobile ? 40 : 80),
-                  Flex(
-                    direction: mobile ? Axis.vertical : Axis.horizontal,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: mobile ? double.infinity : MediaQuery.of(context).size.width * 0.45,
-                        child: _buildHeroText(context, mobile),
-                      ),
-                      if (mobile) const SizedBox(height: 60) else const SizedBox(width: 50),
-                      SizedBox(
-                        width: mobile ? double.infinity : MediaQuery.of(context).size.width * 0.4,
-                        child: _buildHeroImageSection(mobile),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                );
+              }
             ),
           ),
         ],
@@ -158,7 +170,7 @@ class LoginPage extends StatelessWidget {
           left: -50,
           child: CircleAvatar(
             radius: 120,
-            backgroundColor: AppColors.primary.withOpacity(0.12),
+            backgroundColor: AppColors.primary.withValues(alpha: 0.12),
           ),
         ),
         Positioned(
@@ -169,7 +181,7 @@ class LoginPage extends StatelessWidget {
             height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.primary.withOpacity(0.15), width: 2),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.15), width: 2),
             ),
           ),
         ),
@@ -177,7 +189,10 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLogo() {
+  Widget _buildLogo(double screenWidth) {
+    // Logo text scales down slightly on very small screens
+    final double fontSize = (screenWidth * 0.045).clamp(16.0, 22.0);
+    
     return Row(
       children: [
         Container(
@@ -189,7 +204,7 @@ class LoginPage extends StatelessWidget {
         const SizedBox(width: 10),
         Text('Smart Canteen',
             style: GoogleFonts.poppins(
-                color: AppColors.textDark, fontWeight: FontWeight.bold, fontSize: 18)),
+                color: AppColors.textDark, fontWeight: FontWeight.bold, fontSize: fontSize)),
       ],
     );
   }
@@ -199,7 +214,7 @@ class LoginPage extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
         boxShadow: [
-          BoxShadow(color: Colors.orange.withOpacity(0.1), blurRadius: 10)
+          BoxShadow(color: Colors.orange.withValues(alpha: 0.1), blurRadius: 10)
         ],
       ),
       child: OutlinedButton(
@@ -220,15 +235,20 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroText(BuildContext context, bool mobile) {
+  Widget _buildHeroText(BuildContext context, bool isDesktop) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    // Font size fluidly adjusts between 32 and 65 based on screen width
+    final double titleSize = (screenWidth * 0.08).clamp(32.0, 65.0);
+    final double subtitleSize = (screenWidth * 0.025).clamp(14.0, 18.0);
+
     return Column(
-      crossAxisAlignment: mobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment: isDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
         RichText(
-          textAlign: mobile ? TextAlign.center : TextAlign.start,
+          textAlign: isDesktop ? TextAlign.start : TextAlign.center,
           text: TextSpan(
             style: GoogleFonts.poppins(
-              fontSize: mobile ? 36 : 60, 
+              fontSize: titleSize, 
               fontWeight: FontWeight.w800, 
               color: AppColors.textDark, 
               height: 1.1
@@ -242,8 +262,8 @@ class LoginPage extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           'The smartest way to order food at your canteen.',
-          textAlign: mobile ? TextAlign.center : TextAlign.start,
-          style: TextStyle(color: AppColors.textLight, fontSize: mobile ? 16 : 18, height: 1.6),
+          textAlign: isDesktop ? TextAlign.start : TextAlign.center,
+          style: TextStyle(color: AppColors.textLight, fontSize: subtitleSize, height: 1.6),
         ),
         const SizedBox(height: 35),
         Container(
@@ -251,7 +271,7 @@ class LoginPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(35),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.4),
+                color: AppColors.primary.withValues(alpha: 0.4),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -279,57 +299,73 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroImageSection(bool mobile) {
+Widget _buildHeroImageSection(double maxWidth) {
+    // Ensures the image isn't too large on massive screens, nor overflowing on small ones
+    final double baseWidth = (maxWidth * 0.8).clamp(250.0, 460.0);
+    final double baseHeight = (baseWidth * 0.9).clamp(250.0, 440.0);
+    final bool isSmall = maxWidth < 600;
+
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
         Positioned(
           child: Container(
-            width: mobile ? 300 : 460,
-            height: mobile ? 280 : 400,
+            width: baseWidth * 0.95,
+            height: baseHeight * 0.9,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.15),
+              color: AppColors.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(50),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(color: Colors.transparent),
               ),
             ),
           ),
         ),
         ClipRRect(
-          borderRadius: BorderRadius.circular(mobile ? 30 : 40),
+          borderRadius: BorderRadius.circular(isSmall ? 30 : 40),
           child: Image.network(
             'https://images.unsplash.com/photo-1559329007-40df8a9345d8?q=80&w=800',
-            width: double.infinity,
-            height: mobile ? 320 : 440,
+            width: baseWidth,
+            height: baseHeight,
             fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return SizedBox(
+                width: baseWidth,
+                height: baseHeight,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary.withValues(alpha: 0.5),
+                  ),
+                ),
+              );
+            },
           ),
         ),
         _buildBadge(
           top: 20, 
-          right: mobile ? -10 : -30, 
+          right: isSmall ? -10 : -30, 
           icon: Icons.star, 
           label: "RATED #1", 
           value: "Campus Choice",
-          isSmall: mobile
+          isSmall: isSmall
         ),
         _buildBadge(
           bottom: -15, 
-          left: mobile ? 10 : 30, 
+          left: isSmall ? 10 : 30, 
           icon: Icons.flash_on, 
           label: "INSTANT", 
           value: "Smart Pickup",
-          isSmall: mobile
+          isSmall: isSmall
         ),
       ],
     );
   }
-
   Widget _buildBadge({
     double? top, double? right, double? bottom, double? left,
     required IconData icon, required String label, required String value,
@@ -345,7 +381,7 @@ class LoginPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(15),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20)],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 20)],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
