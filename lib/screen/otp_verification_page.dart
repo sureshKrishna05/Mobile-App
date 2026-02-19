@@ -2,9 +2,78 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartcanteen/screen/dashboard_page.dart';
 import 'package:smartcanteen/theme/app_color.dart';
+import 'package:smartcanteen/core/services/auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class OTPVerificationPage extends StatelessWidget {
-  const OTPVerificationPage({super.key});
+class OTPVerificationPage extends StatefulWidget {
+  final String email;
+  final bool isLogin; // Tells us if we are verifying a Login or a Signup
+
+  const OTPVerificationPage({
+    super.key, 
+    required this.email, 
+    this.isLogin = false
+  });
+
+  @override
+  State<OTPVerificationPage> createState() => _OTPVerificationPageState();
+}
+
+class _OTPVerificationPageState extends State<OTPVerificationPage> {
+  final _authService = AuthService();
+  bool isLoading = false;
+  
+  // Controllers to capture all 6 digits
+  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+
+  @override
+  void dispose() {
+    for (var controller in _otpControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  // ✅ VERIFY OTP LOGIC
+  Future<void> _verifyCode() async {
+    // Combine the text from all 6 boxes
+    String otpCode = _otpControllers.map((c) => c.text).join();
+
+    if (otpCode.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter the full 6-digit code.")),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      await _authService.verifyOTP(
+        email: widget.email,
+        token: otpCode,
+        // If coming from login use magiclink type, otherwise use signup type
+        type: widget.isLogin ? OtpType.magiclink : OtpType.signup, 
+      );
+
+      if (!mounted) return;
+
+      // Success! Send them to the dashboard
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardPage()),
+        (route) => false, // Clears the navigation stack
+      );
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,23 +85,21 @@ class OTPVerificationPage extends StatelessWidget {
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                // Fluid sizing calculations
                 final bool isDesktop = constraints.maxWidth > 600;
-                // Caps the form width at 450px for desktop, otherwise uses screen width minus padding
                 final double contentWidth = isDesktop ? 450 : constraints.maxWidth;
-                // Calculates OTP box size dynamically, clamped between 50 and 70 pixels
-                final double boxSize = ((contentWidth - 100) / 4).clamp(50.0, 70.0);
+                
+                // 🟢 FIXED: Math adjusted to fit 6 boxes perfectly
+                final double boxSize = ((contentWidth - 110) / 6).clamp(40.0, 55.0);
 
                 return Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 450), // Prevents ultra-wide stretching
+                    constraints: const BoxConstraints(maxWidth: 450), 
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 20),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: IconButton(
@@ -40,20 +107,22 @@ class OTPVerificationPage extends StatelessWidget {
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
-                          SizedBox(height: constraints.maxHeight * 0.05), // Responsive spacing
+                          SizedBox(height: constraints.maxHeight * 0.05),
                           
                           _buildHeader(contentWidth),
                           
                           SizedBox(height: constraints.maxHeight * 0.06),
                           
+                          // 🟢 FIXED: Generates 6 boxes instead of 4
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: List.generate(4, (index) => 
+                            children: List.generate(6, (index) => 
                               _otpBox(
                                 context, 
+                                index: index,
                                 size: boxSize,
                                 first: index == 0, 
-                                last: index == 3
+                                last: index == 5
                               )
                             ),
                           ),
@@ -76,27 +145,27 @@ class OTPVerificationPage extends StatelessWidget {
     );
   }
 
-  Widget _otpBox(BuildContext context, {required double size, bool first = false, bool last = false}) {
+  Widget _otpBox(BuildContext context, {required int index, required double size, bool first = false, bool last = false}) {
     return SizedBox(
       height: size * 1.2,
       width: size,
       child: TextField(
+        controller: _otpControllers[index],
         autofocus: first,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         maxLength: 1,
-        // Font size scales with the box size
         style: TextStyle(fontSize: size * 0.45, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           counterText: "",
           filled: true,
           fillColor: Colors.white.withValues(alpha: 0.9),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Colors.black12),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: AppColors.primary, width: 2),
           ),
         ),
@@ -125,7 +194,6 @@ class OTPVerificationPage extends StatelessWidget {
   }
 
   Widget _buildHeader(double width) {
-    // Fluid typography
     final double titleSize = (width * 0.08).clamp(26.0, 32.0);
     final double subtitleSize = (width * 0.04).clamp(14.0, 16.0);
 
@@ -137,7 +205,7 @@ class OTPVerificationPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          "Enter the 4-digit code sent to your mail.",
+          "Enter the 6-digit code sent to\n${widget.email}",
           textAlign: TextAlign.center,
           style: TextStyle(color: AppColors.textLight, fontSize: subtitleSize)
         ),
@@ -148,7 +216,7 @@ class OTPVerificationPage extends StatelessWidget {
   Widget _buildVerifyButton(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 60, // Fixed height is fine here since width is constrained
+      height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -160,18 +228,15 @@ class OTPVerificationPage extends StatelessWidget {
         ],
       ),
       child: ElevatedButton(
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const DashboardPage()),
-          );
-        },
+        onPressed: isLoading ? null : _verifyCode,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
         ),
-        child: const Text("Verify & Proceed", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        child: isLoading 
+            ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+            : const Text("Verify & Proceed", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
       ),
     );
   }
@@ -181,7 +246,9 @@ class OTPVerificationPage extends StatelessWidget {
       children: [
         const Text("Didn't receive a code?", style: TextStyle(color: AppColors.textLight)),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            // Add resend logic here later if needed
+          },
           child: const Text("Resend Code", style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
         ),
       ],
