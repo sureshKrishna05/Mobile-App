@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smartcanteen/screen/cart_page.dart';
 // Matching your exact file structure
 import 'package:smartcanteen/theme/app_color.dart';
 import 'package:smartcanteen/screen/login_page.dart';
+import 'package:smartcanteen/screen/payment_page.dart';
 
 void main() async {
   // 1. Ensure Flutter binding is initialized before doing any async work
@@ -28,7 +30,7 @@ class SmartCanteenApp extends StatelessWidget {
         // Using Poppins to keep the premium food-app look
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: const LoginPage(),
+      home:LoginPage(),
     );
   }
 }
