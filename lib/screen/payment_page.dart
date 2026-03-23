@@ -194,7 +194,7 @@ class _PaymentPageState extends State<PaymentPage>
         top: -60, right: -60,
         child: Container(
           width: 220, height: 220,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withOpacity(0.08)),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withValues(alpha: 0.08)),
         ),
       ),
       // Bottom-left orb
@@ -202,7 +202,7 @@ class _PaymentPageState extends State<PaymentPage>
         bottom: 80, left: -40,
         child: Container(
           width: 160, height: 160,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFB74D).withOpacity(0.10)),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFB74D).withValues(alpha: 0.10)),
         ),
       ),
     ]);
@@ -221,7 +221,7 @@ class _PaymentPageState extends State<PaymentPage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 4))],
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 4))],
             ),
             child: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textDark, size: 18),
           ),
@@ -237,7 +237,7 @@ class _PaymentPageState extends State<PaymentPage>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xFF4CAF50).withOpacity(0.12),
+            color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -257,13 +257,13 @@ class _PaymentPageState extends State<PaymentPage>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 20, offset: const Offset(0, 8))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 20, offset: const Offset(0, 8))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
             child: const Icon(Icons.receipt_long_rounded, color: AppColors.primary, size: 18),
           ),
           const SizedBox(width: 10),
@@ -342,12 +342,12 @@ class _PaymentPageState extends State<PaymentPage>
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [BoxShadow(
                   color: sel
-                      ? Color(method['color'] as int).withOpacity(0.35)
-                      : Colors.black.withOpacity(0.05),
+                      ? Color(method['color'] as int).withValues(alpha: 0.35)
+                      : Colors.black.withValues(alpha: 0.05),
                   blurRadius: sel ? 18 : 8,
                   offset: const Offset(0, 6),
                 )],
-                border: sel ? null : Border.all(color: Colors.black.withOpacity(0.06)),
+                border: sel ? null : Border.all(color: Colors.black.withValues(alpha: .06)),
               ),
               child: Row(children: [
                 // Icon container
@@ -355,7 +355,7 @@ class _PaymentPageState extends State<PaymentPage>
                   duration: const Duration(milliseconds: 280),
                   width: 44, height: 44,
                   decoration: BoxDecoration(
-                    color: sel ? Colors.white.withOpacity(0.2) : Color(method['color'] as int).withOpacity(0.1),
+                    color: sel ? Colors.white.withValues(alpha: 0.2) : Color(method['color'] as int).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(method['icon'] as IconData, size: 22, color: sel ? Colors.white : Color(method['color'] as int)),
@@ -409,7 +409,7 @@ class _PaymentPageState extends State<PaymentPage>
           Row(children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: const Color(0xFF4CAF50).withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: const Color(0xFF4CAF50).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
               child: const Icon(Icons.account_balance_wallet_rounded, color: Color(0xFF4CAF50), size: 18),
             ),
             const SizedBox(width: 10),
@@ -453,7 +453,7 @@ class _PaymentPageState extends State<PaymentPage>
           Row(children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: const Color(0xFF6739B7).withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: const Color(0xFF6739B7).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
               child: const Icon(Icons.phone_android_rounded, color: Color(0xFF6739B7), size: 18),
             ),
             const SizedBox(width: 10),
@@ -477,7 +477,7 @@ class _PaymentPageState extends State<PaymentPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF6739B7).withOpacity(0.06),
+              color: const Color(0xFF6739B7).withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(children: [
@@ -496,7 +496,7 @@ class _PaymentPageState extends State<PaymentPage>
           Row(children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: const Color(0xFF00BAF2).withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: const Color(0xFF00BAF2).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
               child: const Icon(Icons.payments_rounded, color: Color(0xFF00BAF2), size: 18),
             ),
             const SizedBox(width: 10),
@@ -520,7 +520,7 @@ class _PaymentPageState extends State<PaymentPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF00BAF2).withOpacity(0.06),
+              color: const Color(0xFF00BAF2).withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(children: [
@@ -539,7 +539,7 @@ class _PaymentPageState extends State<PaymentPage>
           Row(children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: const Color(0xFF3F51B5).withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: const Color(0xFF3F51B5).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
               child: const Icon(Icons.account_balance_rounded, color: Color(0xFF3F51B5), size: 18),
             ),
             const SizedBox(width: 10),
@@ -554,9 +554,9 @@ class _PaymentPageState extends State<PaymentPage>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3F51B5).withOpacity(0.07),
+                    color: const Color(0xFF3F51B5).withValues(alpha: 0.07),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFF3F51B5).withOpacity(0.25)),
+                    border: Border.all(color: const Color(0xFF3F51B5).withValues(alpha: 0.25)),
                   ),
                   child: Text(bank, style: GoogleFonts.poppins(fontSize: 12, color: const Color(0xFF3F51B5), fontWeight: FontWeight.w600)),
                 ),
@@ -566,7 +566,7 @@ class _PaymentPageState extends State<PaymentPage>
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(color: const Color(0xFF3F51B5).withOpacity(0.06), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: const Color(0xFF3F51B5).withValues(alpha: 0.06), borderRadius: BorderRadius.circular(10)),
             child: Row(children: [
               const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF3F51B5)),
               const SizedBox(width: 8),
@@ -589,7 +589,7 @@ class _PaymentPageState extends State<PaymentPage>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))],
         ),
         child: Row(children: [
           const Icon(Icons.shield_rounded, size: 20, color: Color(0xFF4CAF50)),
@@ -629,7 +629,7 @@ class _PaymentPageState extends State<PaymentPage>
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 28),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF8F2),
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.06))),
+        border: Border(top: BorderSide(color: Colors.black.withValues(alpha: 0.06))),
       ),
       child: Row(children: [
         // Total display
@@ -654,14 +654,14 @@ class _PaymentPageState extends State<PaymentPage>
   Widget _buildProcessingOverlay() {
     return Positioned.fill(
       child: Container(
-        color: Colors.black.withOpacity(0.45),
+        color: Colors.black.withValues(alpha: 0.45),
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(28),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 30)],
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 30)],
             ),
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               AnimatedBuilder(
@@ -672,7 +672,7 @@ class _PaymentPageState extends State<PaymentPage>
                     width: 60, height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: SweepGradient(colors: [AppColors.primary.withOpacity(0.1), AppColors.primary]),
+                      gradient: SweepGradient(colors: [AppColors.primary.withValues(alpha: 0.1), AppColors.primary]),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(6),
@@ -721,7 +721,7 @@ class _PaymentPageState extends State<PaymentPage>
                 height: 8 + (i % 4) * 4.0,
                 decoration: BoxDecoration(
                   shape: i.isEven ? BoxShape.circle : BoxShape.rectangle,
-                  color: colors[i % colors.length].withOpacity(0.5),
+                  color: colors[i % colors.length].withValues(alpha: 0.5),
                   borderRadius: i.isEven ? null : BorderRadius.circular(2),
                 ),
               ),
@@ -746,7 +746,7 @@ class _PaymentPageState extends State<PaymentPage>
                         colors: [Color(0xFF4CAF50), Color(0xFF81C784)],
                         begin: Alignment.topLeft, end: Alignment.bottomRight,
                       ),
-                      boxShadow: [BoxShadow(color: const Color(0xFF4CAF50).withOpacity(0.4), blurRadius: 30, offset: const Offset(0, 12))],
+                      boxShadow: [BoxShadow(color: const Color(0xFF4CAF50).withValues(alpha: 0.4), blurRadius: 30, offset: const Offset(0, 12))],
                     ),
                     child: const Icon(Icons.check_rounded, color: Colors.white, size: 58),
                   ),
@@ -772,7 +772,7 @@ class _PaymentPageState extends State<PaymentPage>
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 16, offset: const Offset(0, 6))],
+                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 6))],
                     ),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.currency_rupee_rounded, color: AppColors.primary, size: 20),
@@ -799,7 +799,7 @@ class _PaymentPageState extends State<PaymentPage>
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(colors: [AppColors.primary, Color(0xFFFF8C42)]),
                           borderRadius: BorderRadius.circular(20),
-                          boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 8))],
+                          boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 8))],
                         ),
                         child: Center(child: Text('Back to Home',
                             style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16))),
@@ -817,7 +817,7 @@ class _PaymentPageState extends State<PaymentPage>
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
                       ),
                       child: Center(child: Text('Track Order',
                           style: GoogleFonts.poppins(color: AppColors.textDark, fontWeight: FontWeight.w700, fontSize: 16))),
@@ -871,7 +871,7 @@ class _PayButtonState extends State<_PayButton> with SingleTickerProviderStateMi
           decoration: BoxDecoration(
             gradient: const LinearGradient(colors: [AppColors.primary, Color(0xFFFF8C42)]),
             borderRadius: BorderRadius.circular(18),
-            boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.45), blurRadius: 20, offset: const Offset(0, 8))],
+            boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.45), blurRadius: 20, offset: const Offset(0, 8))],
           ),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             const Icon(Icons.lock_rounded, color: Colors.white, size: 16),
@@ -916,8 +916,8 @@ class _InputCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4))],
-        border: Border.all(color: AppColors.primary.withOpacity(0.15)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))],
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
       ),
       child: child,
     );

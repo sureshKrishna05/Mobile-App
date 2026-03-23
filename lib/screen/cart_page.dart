@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math; // Added for rocket rotation logic
-import '../theme/App_Color.dart';
+import '../theme/app_color.dart';
 import 'payment_page.dart';
 
 class CartPage extends StatefulWidget {
@@ -146,9 +146,9 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       child: IgnorePointer(
         child: Stack(
           children: [
-            Positioned(top: -50, left: -60, child: Container(width: 250, height: 250, decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withOpacity(0.08)))),
-            Positioned(bottom: 100, right: -40, child: Container(width: 180, height: 180, decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.secondary.withOpacity(0.1)))),
-            Positioned(top: 300, right: 40, child: Container(width: 40, height: 40, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppColors.primary.withOpacity(0.1), width: 2)))),
+            Positioned(top: -50, left: -60, child: Container(width: 250, height: 250, decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withValues(alpha: 0.08)))),
+            Positioned(bottom: 100, right: -40, child: Container(width: 180, height: 180, decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.secondary.withValues(alpha: 0.1)))),
+            Positioned(top: 300, right: 40, child: Container(width: 40, height: 40, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppColors.primary.withValues(alpha: 0.1), width: 2)))),
           ],
         ),
       ),
@@ -181,7 +181,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.secondary.withOpacity(0.5))),
+          decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.secondary.withValues(alpha: 0.5))),
           child: Row(
             children: [
               ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.network('https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=120', height: 60, width: 60, fit: BoxFit.cover)),
@@ -211,7 +211,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
   Widget _buildSummaryFrame(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.secondary.withOpacity(0.5))),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.secondary.withValues(alpha: 0.5))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
