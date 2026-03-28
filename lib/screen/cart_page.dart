@@ -302,7 +302,7 @@ class _CartPageState extends State<CartPage>
                   height: 60,
                   width: 60,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     height: 60,
                     width: 60,
                     color: AppColors.secondary,
