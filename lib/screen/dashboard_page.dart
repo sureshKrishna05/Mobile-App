@@ -172,11 +172,11 @@ class _DashboardPageState extends State<DashboardPage>
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, a, __) => CartPage(
+        pageBuilder: (_, a, _) => CartPage(
           cartQuantities: Map.from(_cart),
           allFoods: _allFoods,
         ),
-        transitionsBuilder: (_, anim, __, child) => SlideTransition(
+        transitionsBuilder: (_, anim, _, child) => SlideTransition(
           position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
               .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
           child: child,
@@ -251,8 +251,11 @@ class _DashboardPageState extends State<DashboardPage>
                                   }),
                                   onRemove: (id) => setState(() {
                                     final c = _cart[id] ?? 0;
-                                    if (c <= 1) _cart.remove(id);
-                                    else _cart[id] = c - 1;
+                                    if (c <= 1) {
+                                      _cart.remove(id);
+                                    } else {
+                                      _cart[id] = c - 1;
+                                    }
                                   }),
                                 ),
                               );
@@ -583,8 +586,11 @@ class _DashboardPageState extends State<DashboardPage>
             }),
             onRemove: () => setState(() {
               final c = _cart[foodId] ?? 0;
-              if (c <= 1) _cart.remove(foodId);
-              else _cart[foodId] = c - 1;
+              if (c <= 1) {
+                _cart.remove(foodId);
+              } else {
+                _cart[foodId] = c - 1;
+              }
             }),
           );
         },
@@ -787,7 +793,7 @@ class _MenuSectionState extends State<_MenuSection> {
                     child: Row(children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(food['img'] as String, width: 56, height: 56, fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(width: 56, height: 56, color: Colors.grey[200], child: const Icon(Icons.broken_image, color: Colors.grey))),
+                        child: Image.network(food['img'] as String, width: 56, height: 56, fit: BoxFit.cover, errorBuilder: (_, _, _) => Container(width: 56, height: 56, color: Colors.grey[200], child: const Icon(Icons.broken_image, color: Colors.grey))),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -836,7 +842,7 @@ class _BannerCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: Stack(fit: StackFit.expand, children: [
-        Image.network(item['img'] as String, fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: colors.first)),
+        Image.network(item['img'] as String, fit: BoxFit.cover, errorBuilder: (_, _, _) => Container(color: colors.first)),
         Container(decoration: BoxDecoration(gradient: LinearGradient(colors: [colors.first.withValues(alpha: 0.85), colors.last.withValues(alpha: 0.6), Colors.transparent], stops: const [0.0, 0.5, 1.0], begin: Alignment.centerLeft, end: Alignment.centerRight))),
         Positioned(
           left: 22, top: 0, bottom: 0,
@@ -899,7 +905,7 @@ class _FoodCardState extends State<_FoodCard> with SingleTickerProviderStateMixi
                 borderRadius: const BorderRadius.horizontal(left: Radius.circular(22)),
                 child: Image.network(widget.food['img'] as String, width: 110, height: double.infinity, fit: BoxFit.cover,
                   loadingBuilder: (_, child, progress) { if (progress == null) return child; return _ShimmerBox(controller: widget.shimmerController, width: 110); },
-                  errorBuilder: (_, __, ___) => Container(width: 110, color: Colors.grey[200], child: const Icon(Icons.broken_image, color: Colors.grey)),
+                  errorBuilder: (_, _, _) => Container(width: 110, color: Colors.grey[200], child: const Icon(Icons.broken_image, color: Colors.grey)),
                 ),
               ),
               Positioned(top: 8, left: 8, child: Container(padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3), decoration: BoxDecoration(color: tagColor, borderRadius: BorderRadius.circular(8)), child: Text(widget.food['tag'] as String, style: GoogleFonts.spaceMono(fontSize: 7.5, color: Colors.white, fontWeight: FontWeight.w700, letterSpacing: 0.8)))),
@@ -1007,7 +1013,7 @@ class _ShimmerBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
         animation: controller,
-        builder: (_, __) => Container(width: width, decoration: BoxDecoration(gradient: LinearGradient(colors: const [Color(0xFFEEEEEE), Color(0xFFF8F8F8), Color(0xFFEEEEEE)], stops: [(controller.value - 0.3).clamp(0.0, 1.0), controller.value.clamp(0.0, 1.0), (controller.value + 0.3).clamp(0.0, 1.0)], begin: Alignment.centerLeft, end: Alignment.centerRight))),
+        builder: (_, _) => Container(width: width, decoration: BoxDecoration(gradient: LinearGradient(colors: const [Color(0xFFEEEEEE), Color(0xFFF8F8F8), Color(0xFFEEEEEE)], stops: [(controller.value - 0.3).clamp(0.0, 1.0), controller.value.clamp(0.0, 1.0), (controller.value + 0.3).clamp(0.0, 1.0)], begin: Alignment.centerLeft, end: Alignment.centerRight))),
       );
 }
 
@@ -1021,7 +1027,7 @@ class _AnimatedOrb extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
         animation: controller,
-        builder: (_, __) {
+        builder: (_, _) {
           final dy = 28.0 * math.sin(controller.value * math.pi + phaseShift);
           return Align(alignment: alignment, child: Transform.translate(offset: Offset(0, dy), child: Container(width: size, height: size, decoration: BoxDecoration(shape: BoxShape.circle, color: color))));
         },
