@@ -754,7 +754,7 @@ class _PaymentPageState extends State<PaymentPage>
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               AnimatedBuilder(
                 animation: _processSpin,
-                builder: (_, __) => Transform.rotate(
+                builder: (_, _) => Transform.rotate(
                   angle: _processSpin.value * 2 * 3.14159,
                   child: Container(
                     width: 60,

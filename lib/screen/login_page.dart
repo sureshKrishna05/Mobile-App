@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:smartcanteen/theme/app_color.dart';
 import 'package:smartcanteen/screen/signup_page.dart';
-import 'package:smartcanteen/screen/college_section_page.dart';
+//import 'package:smartcanteen/screen/college_section_page.dart';
+import 'package:smartcanteen/screen/dashboard_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -430,7 +431,7 @@ class _LoginFormState extends State<_LoginForm> {
       Navigator.pop(context); // close dialog
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const CollegeSelectionPage()),
+        MaterialPageRoute(builder: (_) => const DashboardPage(collegeId: "jamal-01", collegeName: "Jammal_mohammed")),
       );
     } on AuthException catch (e) {
       setState(() => _errorMessage = e.message);

@@ -42,15 +42,56 @@ class SmartCanteenApp extends StatelessWidget {
 /// Checks if a session already exists and routes accordingly.
 /// - Logged in  → CollegeSelectionPage
 /// - Logged out → LoginPage
-class _AuthGate extends StatelessWidget {
+class _AuthGate extends StatefulWidget {
   const _AuthGate();
+  @override
+  State<_AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<_AuthGate> {
+  bool _ready = false;
+  bool _loggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSession();
+  }
+
+  Future<void> _checkSession() async {
+    // On Flutter Web, session restores asynchronously from localStorage.
+    // Wait for the first auth state event before routing.
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null) {
+      setState(() { _loggedIn = true; _ready = true; });
+      return;
+    }
+    // Listen for the session to restore
+    Supabase.instance.client.auth.onAuthStateChange.first.then((event) {
+      if (mounted) {
+        setState(() {
+          _loggedIn = event.session != null;
+          _ready = true;
+        });
+      }
+    });
+    // Timeout fallback — if no session after 2s, go to login
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted && !_ready) {
+      setState(() { _loggedIn = false; _ready = true; });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final session = Supabase.instance.client.auth.currentSession;
-    if (session != null) {
-      return const CollegeSelectionPage();
+    if (!_ready) {
+      return const Scaffold(
+        backgroundColor: AppColors.bgRadialEnd,
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
     }
-    return const LoginPage();
+    return _loggedIn ? const CollegeSelectionPage() : const LoginPage();
   }
 }

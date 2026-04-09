@@ -99,12 +99,19 @@ class _CollegeSelectionPageState extends State<CollegeSelectionPage>
 
   // ✅ FIX 4: Fetch colleges from Supabase
   Future<void> _loadColleges() async {
-    try {
-      final data = await Supabase.instance.client
-          .from('colleges')
-          .select()
-          .eq('is_active', true)
-          .order('created_at');
+  try {
+    // ✅ Wait for session to be ready on Flutter Web
+    if (Supabase.instance.client.auth.currentSession == null) {
+      await Supabase.instance.client.auth.onAuthStateChange
+          .firstWhere((e) => e.session != null)
+          .timeout(const Duration(seconds: 3), onTimeout: () => throw Exception('No session'));
+    }
+
+    final data = await Supabase.instance.client
+        .from('colleges')
+        .select()
+        .eq('is_active', true)
+        .order('created_at');
 
       final colleges = (data as List<dynamic>)
           .asMap()
@@ -452,11 +459,11 @@ class _PremiumCollegeCardState extends State<_PremiumCollegeCard>
           Navigator.push(
             context,
             PageRouteBuilder(
-              pageBuilder: (_, a, __) => DashboardPage(
+              pageBuilder: (_, a, _) => DashboardPage(
                 collegeId: widget.college.id,
                 collegeName: widget.college.name,
               ),
-              transitionsBuilder: (_, anim, __, child) {
+              transitionsBuilder: (_, anim, _, child) {
                 return FadeTransition(
                   opacity: anim,
                   child: SlideTransition(
@@ -509,7 +516,7 @@ class _PremiumCollegeCardState extends State<_PremiumCollegeCard>
                         Image.network(
                           widget.college.image ?? '',
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
+                          errorBuilder: (_, _, _) => Container(
                             color: Colors.grey[200],
                             child: const Center(
                               child: Icon(Icons.broken_image,
@@ -684,7 +691,7 @@ class _ShimmerBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
-      builder: (_, __) {
+      builder: (_, _) {
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -727,7 +734,7 @@ class _FloatingOrb extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
-      builder: (_, __) {
+      builder: (_, _) {
         final dy = translateY * math.sin(controller.value * math.pi);
         return Align(
           alignment: alignment,

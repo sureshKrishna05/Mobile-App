@@ -53,44 +53,37 @@ class _SignupPageState extends State<SignupPage> {
 
     setState(() { _isLoading = true; _errorMessage = null; });
 
-    try {
-      // ✅ FIX 3: Register with Supabase Auth and pass full_name as metadata
-      final response = await Supabase.instance.client.auth.signUp(
-        email: email,
-        password: password,
-        data: {'full_name': username},
-      );
+try {
+  // ✅ KEEP THIS LINE — you deleted it by mistake
+  final response = await Supabase.instance.client.auth.signUp(
+    email: email,
+    password: password,
+    data: {'full_name': username},
+  );
 
-      if (!mounted) return;
+  if (!mounted) return;
 
-      if (response.user != null) {
-        // ✅ FIX 4: Insert profile row after successful signup
-        await Supabase.instance.client.from('profiles').upsert({
-          'id': response.user!.id,
-          'full_name': username,
-          'role': 'student',
-        });
+  if (response.user != null) {
+    // ✅ NO upsert here — DB trigger handles profile creation
 
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                OTPVerificationPage(email: email),
-          ),
-        );
-      } else {
-        setState(
-            () => _errorMessage = 'Signup failed. Please try again.');
-      }
-    } on AuthException catch (e) {
-      setState(() => _errorMessage = e.message);
-    } catch (e) {
-      setState(() => _errorMessage = 'An unexpected error occurred.');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => OTPVerificationPage(email: email),
+      ),
+    );
+  } else {
+    setState(() => _errorMessage = 'Signup failed. Please try again.');
   }
+  } on AuthException catch (e) {
+  setState(() => _errorMessage = e.message);
+  } catch (e) {
+  setState(() => _errorMessage = 'An unexpected error occurred.');
+  } finally {
+  if (mounted) setState(() => _isLoading = false);
+  }
+}
 
   @override
   Widget build(BuildContext context) {
