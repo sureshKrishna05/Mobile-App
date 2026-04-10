@@ -548,7 +548,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage>
           Text(
             _filter == 'all'
                 ? 'Your order history will appear here once you place an order.'
-                : 'No ${_filter} orders found.',
+                : 'No $_filter orders found.',
             style: GoogleFonts.poppins(
                 fontSize: 13,
                 color: AppColors.textLight,

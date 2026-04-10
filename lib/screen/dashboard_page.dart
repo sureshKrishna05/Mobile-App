@@ -4,6 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:smartcanteen/theme/app_color.dart';
 import 'package:smartcanteen/screen/cart_page.dart';
+// ✅ Added imports for Order History and Logout
+import 'package:smartcanteen/screen/order_history_page.dart'; 
+import 'package:smartcanteen/screen/login_page.dart'; 
 
 class DashboardPage extends StatefulWidget {
   final String collegeId;
@@ -163,6 +166,50 @@ class _DashboardPageState extends State<DashboardPage>
     }
   }
 
+  // ✅ Added Logout Dialog Function
+ void _showLogoutDialog() {
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        "Log Out",
+        style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        "Are you sure you want to log out of your account?",
+        style: GoogleFonts.poppins(fontSize: 14),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx), // ✅ FIXED
+          child: Text(
+            "Cancel",
+            style: GoogleFonts.poppins(color: Colors.grey),
+          ),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+          onPressed: () async { // ✅ FIXED
+            await Supabase.instance.client.auth.signOut();
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginPage()),
+                (route) => false,
+              );
+            }
+          },
+          child: Text(
+            "Log Out",
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
   @override
   void dispose() {
     _pageEntryController.dispose();
@@ -189,7 +236,6 @@ class _DashboardPageState extends State<DashboardPage>
         pageBuilder: (_, a, _) => CartPage(
           cartQuantities: Map.from(_cart),
           allFoods: _allFoods,
-          // ✅ FIX: Pass the canteenId to CartPage!
           canteenId: widget.collegeId,
         ),
         transitionsBuilder: (_, anim, _, child) => SlideTransition(
@@ -333,18 +379,22 @@ class _DashboardPageState extends State<DashboardPage>
     return Padding(
       padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 10),
       child: Row(children: [
-        Container(
-          padding: const EdgeInsets.all(2.5),
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(colors: [AppColors.primary, Color(0xFFFF8C42)]),
-          ),
-          child: CircleAvatar(
-            radius: avatarR,
-            backgroundImage: _avatarUrl != null
-                ? NetworkImage(_avatarUrl!)
-                : const NetworkImage('https://i.pravatar.cc/150?img=12'),
-            backgroundColor: AppColors.secondary,
+        // ✅ 1. Tap Avatar to Logout
+        GestureDetector(
+          onTap: _showLogoutDialog,
+          child: Container(
+            padding: const EdgeInsets.all(2.5),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(colors: [AppColors.primary, Color(0xFFFF8C42)]),
+            ),
+            child: CircleAvatar(
+              radius: avatarR,
+              backgroundImage: _avatarUrl != null
+                  ? NetworkImage(_avatarUrl!)
+                  : const NetworkImage('https://i.pravatar.cc/150?img=12'),
+              backgroundColor: AppColors.secondary,
+            ),
           ),
         ),
         const SizedBox(width: 12),
@@ -357,7 +407,16 @@ class _DashboardPageState extends State<DashboardPage>
                     color: AppColors.textDark, fontWeight: FontWeight.w800, fontSize: nameSize)),
           ]),
         ),
-        _IconBtn(icon: Icons.notifications_outlined, badge: "3", onTap: () {}),
+        // ✅ 2. Changed Bell icon to Orders icon and linked to OrderHistoryPage
+        _IconBtn(
+          icon: Icons.receipt_long_rounded, 
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const OrderHistoryPage()),
+            );
+          }
+        ),
         const SizedBox(width: 10),
         _IconBtn(
           icon: Icons.shopping_bag_outlined,
