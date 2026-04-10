@@ -7,13 +7,15 @@ import 'package:smartcanteen/screen/cart_page.dart'; // for CartItem
 
 class PaymentPage extends StatefulWidget {
   final double amountToPay;
-  // ✅ FIX 1: Receives real cart items to create the order in Supabase
   final List<CartItem> cartItems;
+  // ✅ FIX 1: Added canteenId to link the order to the correct canteen
+  final String canteenId; 
 
   const PaymentPage({
     super.key,
     required this.amountToPay,
     required this.cartItems,
+    required this.canteenId, // ✅ Required parameter added
   });
 
   @override
@@ -146,7 +148,6 @@ class _PaymentPageState extends State<PaymentPage>
     },
   ];
 
-  // ✅ FIX 2: Create real order in Supabase on payment success
   Future<void> _onPayNow() async {
     HapticFeedback.mediumImpact();
     setState(() => _isProcessing = true);
@@ -155,14 +156,14 @@ class _PaymentPageState extends State<PaymentPage>
       final supabase = Supabase.instance.client;
       final userId = supabase.auth.currentUser?.id;
 
-      // Simulate payment processing delay
       await Future.delayed(const Duration(milliseconds: 2200));
 
       if (userId != null) {
-        // ✅ FIX 3: Insert order row
+        // ✅ FIX 2: Inserts the order tied directly to the Canteen!
         final orderResponse = await supabase
             .from('orders')
             .insert({
+              'canteen_id': widget.canteenId, // <--- Passes the canteen ID
               'student_id': userId,
               'total_amount': _total,
               'status': 'paid',
@@ -173,21 +174,18 @@ class _PaymentPageState extends State<PaymentPage>
 
         final orderId = orderResponse['id'] as String;
 
-        // ✅ FIX 4: Insert order_items rows (one per cart item)
+        // ✅ FIX 3: Loops through the cart passing the real UUID
         final orderItems = widget.cartItems.map((item) => {
               'order_id': orderId,
+              'menu_item_id': item.id, // <--- Passes the String UUID
               'quantity': item.quantity,
               'price_at_time': item.price,
-              // Note: menu_item_id would need a real UUID from DB.
-              // For now we store what we have. Wire this up once
-              // menu_items are fetched from Supabase with real UUIDs.
             }).toList();
 
         await supabase.from('order_items').insert(orderItems);
 
         _orderNumber = 'SC${orderId.substring(0, 8).toUpperCase()}';
       } else {
-        // Not logged in (e.g., guest) — still show success UI
         _orderNumber =
             'SC${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
       }
@@ -401,7 +399,6 @@ class _PaymentPageState extends State<PaymentPage>
         ]),
         const SizedBox(height: 18),
 
-        // ✅ FIX 5: Show real cart items in summary
         ...widget.cartItems.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: _SummaryRow(
@@ -917,7 +914,6 @@ class _PaymentPageState extends State<PaymentPage>
                     ]),
                   ),
                   const SizedBox(height: 36),
-                  // ✅ FIX 6: Show real order number from Supabase
                   Text('Order #${_orderNumber ?? '---'}',
                       style: GoogleFonts.spaceMono(
                           fontSize: 12,
