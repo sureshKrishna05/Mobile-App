@@ -23,8 +23,7 @@ class College {
     required this.tagColor,
   });
 
-  // ✅ FIX 2: Factory from Supabase row. Falls back to defaults for
-  // optional columns that don't exist in the DB yet.
+  // ✅ FIX 2: Factory from Supabase row. 
   factory College.fromMap(Map<String, dynamic> map, int index) {
     const fallbackImages = [
       'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=500&q=80',
@@ -37,8 +36,8 @@ class College {
     ];
 
     return College(
-      id: map['id'] as String,
-      name: map['name'] as String,
+      id: map['id'].toString(), // ✅ SAFELY cast UUID to String
+      name: map['name']?.toString() ?? 'Unknown College', // ✅ Safe fallback
       image: map['image_url'] as String? ?? fallbackImages[index % fallbackImages.length],
       location: map['location'] as String? ?? 'Campus',
       tag: map['tag'] as String? ?? 'Campus',
@@ -96,7 +95,8 @@ class _CollegeSelectionPageState extends State<CollegeSelectionPage>
 
     _loadColleges();
   }
-// ✅ FIX 4: Fetch canteens from Supabase
+
+  // ✅ FIX 4: Fetch canteens from Supabase
   Future<void> _loadColleges() async {
     try {
       if (Supabase.instance.client.auth.currentSession == null) {
@@ -129,7 +129,6 @@ class _CollegeSelectionPageState extends State<CollegeSelectionPage>
             .then((_) => _gridController.forward());
       }
     } catch (e) {
-      // ✅ FIXED: Print the exact error to the console so you can see it!
       debugPrint("🔥 CANTEEN FETCH ERROR: $e"); 
       
       if (mounted) {
@@ -408,7 +407,6 @@ class _StaggeredCardEntrance extends StatelessWidget {
 // Premium College Card — now uses College model
 // ─────────────────────────────────────────────────────────────────
 class _PremiumCollegeCard extends StatefulWidget {
-  // ✅ FIX 5: Receives a College model, not a raw Map
   final College college;
   final AnimationController shimmerController;
 

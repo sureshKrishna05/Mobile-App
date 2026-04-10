@@ -3,9 +3,9 @@ import 'dart:math' as math;
 import '../theme/app_color.dart';
 import 'payment_page.dart';
 
-// ✅ FIX 1: CartItem model to hold real item data passed from Dashboard
+// ✅ FIX 1: CartItem id changed to String for UUIDs
 class CartItem {
-  final int id;
+  final String id; 
   final String name;
   final double price;
   final String imageUrl;
@@ -21,14 +21,16 @@ class CartItem {
 }
 
 class CartPage extends StatefulWidget {
-  // ✅ FIX 2: Receives real cart data from DashboardPage
-  final Map<int, int> cartQuantities;          // foodId → qty
-  final List<Map<String, dynamic>> allFoods;  // full food list to look up names/prices
+  // ✅ FIX 2: cartQuantities uses String for UUIDs, added canteenId
+  final Map<String, int> cartQuantities;          // foodId → qty
+  final List<Map<String, dynamic>> allFoods;  // full food list
+  final String canteenId; 
 
   const CartPage({
     super.key,
     required this.cartQuantities,
     required this.allFoods,
+    required this.canteenId,
   });
 
   @override
@@ -60,8 +62,9 @@ class _CartPageState extends State<CartPage>
   void _buildCartItems() {
     _cartItems = widget.cartQuantities.entries
         .map((entry) {
+          // ✅ Safe string comparison for UUIDs
           final food = widget.allFoods.firstWhere(
-            (f) => f['id'] == entry.key,
+            (f) => f['id'].toString() == entry.key,
             orElse: () => {},
           );
           if (food.isEmpty) return null;
@@ -107,8 +110,9 @@ class _CartPageState extends State<CartPage>
       MaterialPageRoute(
         builder: (_) => PaymentPage(
           amountToPay: total,
-          // ✅ FIX 4: Pass cart items forward to payment for order creation
+          // ✅ FIX 4: Pass cart items and canteenId forward to payment for order creation
           cartItems: _cartItems,
+          canteenId: widget.canteenId,
         ),
       ),
     ).then((_) {

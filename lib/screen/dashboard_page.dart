@@ -23,8 +23,8 @@ class _DashboardPageState extends State<DashboardPage>
     with TickerProviderStateMixin {
 
   int _selectedCategoryIndex = 0;
-  final Set<int> _wishlist = {};
-  final Map<int, int> _cart = {};
+  final Set<String> _wishlist = {};
+  final Map<String, int> _cart = {};
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
@@ -52,7 +52,6 @@ class _DashboardPageState extends State<DashboardPage>
     {"label": "Drinks",    "icon": Icons.local_drink_rounded},
   ];
 
-  // ✅ FIX: Empty list and loading state for real data
   List<Map<String, dynamic>> _allFoods = [];
   bool _isLoadingMenu = true;
 
@@ -97,11 +96,9 @@ class _DashboardPageState extends State<DashboardPage>
     _pageEntryController.forward();
 
     _loadUserProfile();
-    // ✅ FIX: Call the fetch method when the page loads
     _fetchMenuItems();
   }
 
-  // ✅ FIX: Fetch Real Menu Items from Supabase
   Future<void> _fetchMenuItems() async {
     try {
       final response = await Supabase.instance.client
@@ -112,14 +109,14 @@ class _DashboardPageState extends State<DashboardPage>
       final List<Map<String, dynamic>> parsedFoods = [];
 
       for (var item in response) {
-        int catId = 1; // Default to Breakfast
+        int catId = 1; 
         final String dbCat = item['category']?.toString().toLowerCase() ?? '';
         if (dbCat.contains('lunch')) catId = 2;
         if (dbCat.contains('snack')) catId = 3;
         if (dbCat.contains('drink')) catId = 4;
 
         parsedFoods.add({
-          "id": item['id'], 
+          "id": item['id'].toString(),
           "name": item['name'] ?? 'Unknown Item',
           "price": item['price']?.toString() ?? "0", 
           "img": item['image_url'] ?? 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=500&q=80',
@@ -138,7 +135,6 @@ class _DashboardPageState extends State<DashboardPage>
         });
       }
     } catch (e) {
-      // 🔴 THIS WILL PRINT THE EXACT ERROR IN YOUR DEBUG CONSOLE
       debugPrint("🔥 MENU FETCH ERROR: $e"); 
       if (mounted) {
         setState(() => _isLoadingMenu = false);
@@ -193,6 +189,8 @@ class _DashboardPageState extends State<DashboardPage>
         pageBuilder: (_, a, _) => CartPage(
           cartQuantities: Map.from(_cart),
           allFoods: _allFoods,
+          // ✅ FIX: Pass the canteenId to CartPage!
+          canteenId: widget.collegeId,
         ),
         transitionsBuilder: (_, anim, _, child) => SlideTransition(
           position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
@@ -207,8 +205,8 @@ class _DashboardPageState extends State<DashboardPage>
   int get _cartCount => _cart.values.fold(0, (a, b) => a + b);
 
   double get _cartTotal => _cart.entries.fold(0.0, (sum, e) {
-        final food = _allFoods.firstWhere((f) => f['id'] == e.key, orElse: () => {"price": "0"});
-        return sum + double.parse(food['price'] as String) * e.value;
+        final food = _allFoods.firstWhere((f) => f['id'].toString() == e.key, orElse: () => {"price": "0"});
+        return sum + double.parse(food['price'].toString()) * e.value;
       });
 
   @override
@@ -553,15 +551,9 @@ class _DashboardPageState extends State<DashboardPage>
     ]);
   }
 
-  // ✅ FIX: Added loading spinner while fetching data
   Widget _buildFoodGrid() {
     if (_isLoadingMenu) {
-      return const SizedBox(
-        height: 200,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        ),
-      );
+      return const SizedBox(height: 200, child: Center(child: CircularProgressIndicator(color: AppColors.primary)));
     }
 
     final foods = _filteredFoods;
@@ -598,7 +590,8 @@ class _DashboardPageState extends State<DashboardPage>
         itemCount: foods.length,
         itemBuilder: (_, index) {
           final food   = foods[index];
-          final foodId = food['id'] as int;
+          final String foodId = food['id'].toString(); 
+          
           return _FoodCard(
             food: food,
             isWishlisted: _wishlist.contains(foodId),
@@ -716,9 +709,9 @@ class _TodaysMenuButtonState extends State<_TodaysMenuButton> with SingleTickerP
 
 class _TodaysMenuSheet extends StatelessWidget {
   final List<Map<String, dynamic>> foods;
-  final Map<int, int> cart;
-  final void Function(int id) onAdd;
-  final void Function(int id) onRemove;
+  final Map<String, int> cart;
+  final void Function(String id) onAdd;
+  final void Function(String id) onRemove;
 
   const _TodaysMenuSheet({required this.foods, required this.cart, required this.onAdd, required this.onRemove});
 
@@ -773,9 +766,10 @@ class _MenuSection extends StatefulWidget {
   final String label;
   final IconData icon;
   final List<Map<String, dynamic>> foods;
-  final Map<int, int> cart;
-  final void Function(int) onAdd;
-  final void Function(int) onRemove;
+  final Map<String, int> cart;
+  final void Function(String) onAdd;
+  final void Function(String) onRemove;
+  
   const _MenuSection({required this.label, required this.icon, required this.foods, required this.cart, required this.onAdd, required this.onRemove});
   @override
   State<_MenuSection> createState() => _MenuSectionState();
@@ -808,7 +802,7 @@ class _MenuSectionState extends State<_MenuSection> {
         child: _expanded
             ? Column(
                 children: widget.foods.map((food) {
-                  final id    = food['id'] as int;
+                  final String id = food['id'].toString(); 
                   final count = widget.cart[id] ?? 0;
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
