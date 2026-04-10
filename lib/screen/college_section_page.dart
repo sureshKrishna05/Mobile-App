@@ -96,22 +96,21 @@ class _CollegeSelectionPageState extends State<CollegeSelectionPage>
 
     _loadColleges();
   }
-
-  // ✅ FIX 4: Fetch colleges from Supabase
+// ✅ FIX 4: Fetch canteens from Supabase
   Future<void> _loadColleges() async {
-  try {
-    // ✅ Wait for session to be ready on Flutter Web
-    if (Supabase.instance.client.auth.currentSession == null) {
-      await Supabase.instance.client.auth.onAuthStateChange
-          .firstWhere((e) => e.session != null)
-          .timeout(const Duration(seconds: 3), onTimeout: () => throw Exception('No session'));
-    }
+    try {
+      if (Supabase.instance.client.auth.currentSession == null) {
+        await Supabase.instance.client.auth.onAuthStateChange
+            .firstWhere((e) => e.session != null)
+            .timeout(const Duration(seconds: 3), onTimeout: () => throw Exception('No session'));
+      }
 
-    final data = await Supabase.instance.client
-        .from('colleges')
-        .select()
-        .eq('is_active', true)
-        .order('created_at');
+      // ✅ FIXED: Changed 'colleges' to 'canteens' and 'is_active' to 'is_open'
+      final data = await Supabase.instance.client
+          .from('canteens') 
+          .select()
+          .eq('is_open', true) // Only show open canteens
+          .order('created_at');
 
       final colleges = (data as List<dynamic>)
           .asMap()
@@ -130,6 +129,9 @@ class _CollegeSelectionPageState extends State<CollegeSelectionPage>
             .then((_) => _gridController.forward());
       }
     } catch (e) {
+      // ✅ FIXED: Print the exact error to the console so you can see it!
+      debugPrint("🔥 CANTEEN FETCH ERROR: $e"); 
+      
       if (mounted) {
         setState(() {
           _errorMessage = 'Failed to load colleges. Please retry.';
@@ -138,7 +140,7 @@ class _CollegeSelectionPageState extends State<CollegeSelectionPage>
       }
     }
   }
-
+  
   @override
   void dispose() {
     _bgOrb1Controller.dispose();

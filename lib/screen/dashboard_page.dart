@@ -6,7 +6,6 @@ import 'package:smartcanteen/theme/app_color.dart';
 import 'package:smartcanteen/screen/cart_page.dart';
 
 class DashboardPage extends StatefulWidget {
-  // ✅ FIX 1: Accept college info from CollegeSelectionPage
   final String collegeId;
   final String collegeName;
 
@@ -29,7 +28,6 @@ class _DashboardPageState extends State<DashboardPage>
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
-  // ✅ FIX 2: Real user data from Supabase
   String _userName = 'Loading...';
   String? _avatarUrl;
 
@@ -54,32 +52,9 @@ class _DashboardPageState extends State<DashboardPage>
     {"label": "Drinks",    "icon": Icons.local_drink_rounded},
   ];
 
-  final List<Map<String, dynamic>> _allFoods = [
-    {"id": 0,  "name": "Masala Omelette",     "price": "60",  "img": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=500&q=80", "rating": "4.7", "tag": "POPULAR",    "time": "10 mins", "tagColor": 0xFFFF5722, "category": 1},
-    {"id": 1,  "name": "Poha",                "price": "40",  "img": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=500&q=80", "rating": "4.5", "tag": "LIGHT",      "time": "8 mins",  "tagColor": 0xFF4CAF50, "category": 1},
-    {"id": 2,  "name": "Idli Sambar",         "price": "50",  "img": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=500&q=80", "rating": "4.8", "tag": "HEALTHY",    "time": "12 mins", "tagColor": 0xFF00BCD4, "category": 1},
-    {"id": 3,  "name": "Bread Omelette",      "price": "55",  "img": "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=500&q=80", "rating": "4.4", "tag": "FILLING",    "time": "10 mins", "tagColor": 0xFF9C27B0, "category": 1},
-    {"id": 4,  "name": "Upma",                "price": "35",  "img": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=500&q=80", "rating": "4.3", "tag": "CLASSIC",    "time": "8 mins",  "tagColor": 0xFF795548, "category": 1},
-    {"id": 5,  "name": "Dosa & Chutney",      "price": "70",  "img": "https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=500&q=80", "rating": "4.9", "tag": "BESTSELLER", "time": "15 mins", "tagColor": 0xFFFF5722, "category": 1},
-    {"id": 6,  "name": "Veg Thali",           "price": "120", "img": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=500&q=80", "rating": "4.7", "tag": "BESTSELLER", "time": "20 mins", "tagColor": 0xFFFF5722, "category": 2},
-    {"id": 7,  "name": "Chicken Biryani",     "price": "180", "img": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=500&q=80", "rating": "4.9", "tag": "HOT",        "time": "25 mins", "tagColor": 0xFFFF9800, "category": 2},
-    {"id": 8,  "name": "Paneer Butter Masala","price": "150", "img": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=500&q=80", "rating": "4.6", "tag": "RICH",       "time": "20 mins", "tagColor": 0xFFE91E63, "category": 2},
-    {"id": 9,  "name": "Dal Rice",            "price": "90",  "img": "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=500&q=80", "rating": "4.5", "tag": "COMFORT",    "time": "15 mins", "tagColor": 0xFF795548, "category": 2},
-    {"id": 10, "name": "Chapati Sabzi",       "price": "80",  "img": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=500&q=80", "rating": "4.4", "tag": "LIGHT",      "time": "15 mins", "tagColor": 0xFF4CAF50, "category": 2},
-    {"id": 11, "name": "Egg Fried Rice",      "price": "110", "img": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=500&q=80", "rating": "4.6", "tag": "NEW",        "time": "18 mins", "tagColor": 0xFF2196F3, "category": 2},
-    {"id": 12, "name": "Spicy Burger",        "price": "120", "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80", "rating": "4.5", "tag": "BESTSELLER", "time": "15 mins", "tagColor": 0xFFFF5722, "category": 3},
-    {"id": 13, "name": "Cheesy Fries",        "price": "90",  "img": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=500&q=80", "rating": "4.6", "tag": "HOT",        "time": "12 mins", "tagColor": 0xFFFF9800, "category": 3},
-    {"id": 14, "name": "Veg Pizza",           "price": "250", "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=500&q=80", "rating": "4.2", "tag": "NEW",        "time": "25 mins", "tagColor": 0xFF4CAF50, "category": 3},
-    {"id": 15, "name": "Samosa (2 pcs)",      "price": "30",  "img": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=500&q=80", "rating": "4.7", "tag": "CLASSIC",    "time": "5 mins",  "tagColor": 0xFF795548, "category": 3},
-    {"id": 16, "name": "Pav Bhaji",           "price": "80",  "img": "https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=500&q=80", "rating": "4.8", "tag": "POPULAR",    "time": "15 mins", "tagColor": 0xFFFF5722, "category": 3},
-    {"id": 17, "name": "Maggi Noodles",       "price": "50",  "img": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=500&q=80", "rating": "4.5", "tag": "QUICK",      "time": "8 mins",  "tagColor": 0xFF9C27B0, "category": 3},
-    {"id": 18, "name": "Mango Lassi",         "price": "60",  "img": "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?auto=format&fit=crop&w=500&q=80", "rating": "4.8", "tag": "POPULAR",    "time": "5 mins",  "tagColor": 0xFFFF9800, "category": 4},
-    {"id": 19, "name": "Cold Coffee",         "price": "70",  "img": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=500&q=80", "rating": "4.7", "tag": "CHILLED",    "time": "5 mins",  "tagColor": 0xFF795548, "category": 4},
-    {"id": 20, "name": "Fresh Lime Soda",     "price": "40",  "img": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?auto=format&fit=crop&w=500&q=80", "rating": "4.5", "tag": "FRESH",      "time": "3 mins",  "tagColor": 0xFF4CAF50, "category": 4},
-    {"id": 21, "name": "Masala Chai",         "price": "25",  "img": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=500&q=80", "rating": "4.9", "tag": "BESTSELLER", "time": "5 mins",  "tagColor": 0xFFFF5722, "category": 4},
-    {"id": 22, "name": "Watermelon Juice",    "price": "50",  "img": "https://images.unsplash.com/photo-1568909344668-6f14a07b56a0?auto=format&fit=crop&w=500&q=80", "rating": "4.6", "tag": "HEALTHY",    "time": "5 mins",  "tagColor": 0xFF00BCD4, "category": 4},
-    {"id": 23, "name": "Buttermilk",          "price": "30",  "img": "https://images.unsplash.com/photo-1572441713132-c542fc4fe282?auto=format&fit=crop&w=500&q=80", "rating": "4.4", "tag": "LIGHT",      "time": "3 mins",  "tagColor": 0xFF9C27B0, "category": 4},
-  ];
+  // ✅ FIX: Empty list and loading state for real data
+  List<Map<String, dynamic>> _allFoods = [];
+  bool _isLoadingMenu = true;
 
   final List<Map<String, dynamic>> _featured = [
     {"title": "Today's Special", "subtitle": "Veg Thali Deal",         "discount": "30% OFF",  "img": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",  "gradient": [0xFFFF5722, 0xFFFF8C42]},
@@ -121,11 +96,56 @@ class _DashboardPageState extends State<DashboardPage>
 
     _pageEntryController.forward();
 
-    // ✅ FIX 3: Fetch real user profile from Supabase
     _loadUserProfile();
+    // ✅ FIX: Call the fetch method when the page loads
+    _fetchMenuItems();
   }
 
-  // ✅ FIX 4: Real profile fetch
+  // ✅ FIX: Fetch Real Menu Items from Supabase
+  Future<void> _fetchMenuItems() async {
+    try {
+      final response = await Supabase.instance.client
+          .from('menu_items') 
+          .select()
+          .eq('canteen_id', widget.collegeId); 
+
+      final List<Map<String, dynamic>> parsedFoods = [];
+
+      for (var item in response) {
+        int catId = 1; // Default to Breakfast
+        final String dbCat = item['category']?.toString().toLowerCase() ?? '';
+        if (dbCat.contains('lunch')) catId = 2;
+        if (dbCat.contains('snack')) catId = 3;
+        if (dbCat.contains('drink')) catId = 4;
+
+        parsedFoods.add({
+          "id": item['id'], 
+          "name": item['name'] ?? 'Unknown Item',
+          "price": item['price']?.toString() ?? "0", 
+          "img": item['image_url'] ?? 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=500&q=80',
+          "rating": "4.5", 
+          "tag": "FRESH",
+          "time": "10 mins",
+          "tagColor": 0xFFFF5722,
+          "category": catId, 
+        });
+      }
+
+      if (mounted) {
+        setState(() {
+          _allFoods = parsedFoods;
+          _isLoadingMenu = false;
+        });
+      }
+    } catch (e) {
+      // 🔴 THIS WILL PRINT THE EXACT ERROR IN YOUR DEBUG CONSOLE
+      debugPrint("🔥 MENU FETCH ERROR: $e"); 
+      if (mounted) {
+        setState(() => _isLoadingMenu = false);
+      }
+    }
+  }
+
   Future<void> _loadUserProfile() async {
     try {
       final userId = Supabase.instance.client.auth.currentUser?.id;
@@ -143,7 +163,6 @@ class _DashboardPageState extends State<DashboardPage>
         });
       }
     } catch (_) {
-      // Silently fallback to default name
       if (mounted) setState(() => _userName = 'Student');
     }
   }
@@ -167,7 +186,6 @@ class _DashboardPageState extends State<DashboardPage>
     _filterFadeController.animateTo(1.0, duration: const Duration(milliseconds: 280), curve: Curves.easeOut);
   }
 
-  // ✅ FIX 5: Pass real cart data to CartPage
   void _goToCart() {
     Navigator.push(
       context,
@@ -323,7 +341,6 @@ class _DashboardPageState extends State<DashboardPage>
             shape: BoxShape.circle,
             gradient: LinearGradient(colors: [AppColors.primary, Color(0xFFFF8C42)]),
           ),
-          // ✅ FIX 6: Real user avatar (falls back to pravatar if no URL)
           child: CircleAvatar(
             radius: avatarR,
             backgroundImage: _avatarUrl != null
@@ -337,7 +354,6 @@ class _DashboardPageState extends State<DashboardPage>
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text("Good Morning 👋",
                 style: GoogleFonts.poppins(color: AppColors.textLight, fontSize: 11.5)),
-            // ✅ FIX 7: Real user name
             Text(_userName,
                 style: GoogleFonts.playfairDisplay(
                     color: AppColors.textDark, fontWeight: FontWeight.w800, fontSize: nameSize)),
@@ -357,7 +373,6 @@ class _DashboardPageState extends State<DashboardPage>
 
   Widget _buildHeroText(double maxWidth) {
     final double fs = (maxWidth * 0.07).clamp(28.0, 46.0);
-    // ✅ FIX 8: Show selected college name
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(widget.collegeName,
           style: GoogleFonts.poppins(color: AppColors.textLight, fontSize: 12)),
@@ -538,7 +553,17 @@ class _DashboardPageState extends State<DashboardPage>
     ]);
   }
 
+  // ✅ FIX: Added loading spinner while fetching data
   Widget _buildFoodGrid() {
+    if (_isLoadingMenu) {
+      return const SizedBox(
+        height: 200,
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
+    }
+
     final foods = _filteredFoods;
 
     if (foods.isEmpty) {
@@ -632,8 +657,7 @@ class _DashboardPageState extends State<DashboardPage>
 }
 
 // ─────────────────────────────────────────────────────────────────
-// All supporting widgets below are identical to the original
-// (TodaysMenuButton, TodaysMenuSheet, BannerCard, FoodCard, etc.)
+// SUPPORTING WIDGETS
 // ─────────────────────────────────────────────────────────────────
 
 class _TodaysMenuButton extends StatefulWidget {
